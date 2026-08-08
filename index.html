@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cool Lamp Chat Lock</title>
+  <!-- GSAP Library for Smooth Animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #0b0c10;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      transition: background-color 0.5s ease;
+    }
+
+    /* --- Lamp Setup --- */
+    .lamp-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .lamp-shade {
+      width: 170px;
+      height: 95px;
+      background: #1f2833;
+      border-radius: 90px 90px 12px 12px;
+      position: relative;
+      z-index: 2;
+      transition: all 0.5s ease;
+      border: 2px solid #333;
+    }
+
+    /* Lamp Glow Effect */
+    .lamp-shade.on {
+      background: #fef08a;
+      border-color: #fef08a;
+      box-shadow: 0 0 60px #fef08a, 0 20px 80px rgba(254, 240, 138, 0.4);
+    }
+
+    .lamp-stand {
+      width: 10px;
+      height: 130px;
+      background: #45f321;
+      background: linear-gradient(to bottom, #666, #333);
+    }
+
+    .lamp-base {
+      width: 110px;
+      height: 14px;
+      background: #333;
+      border-radius: 8px 8px 0 0;
+    }
+
+    /* --- Left Side Pull String --- */
+    .string-wrapper {
+      position: absolute;
+      top: 90px;
+      left: 20px; /* Shifted to LEFT */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    .string-line {
+      width: 3px;
+      height: 65px;
+      background: #888;
+    }
+
+    .string-knob {
+      width: 16px;
+      height: 16px;
+      background: #f59e0b;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #f59e0b;
+    }
+
+    /* --- Login Form Glassmorphism --- */
+    .login-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      padding: 30px;
+      width: 90%;
+      max-width: 340px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      
+      /* Completely Hidden Initially */
+      opacity: 0;
+      transform: translateY(30px) scale(0.9);
+      pointer-events: none;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Visible State when Light is ON */
+    .login-card.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+    .login-card h2 {
+      margin-bottom: 20px;
+      color: #fef08a;
+      letter-spacing: 1px;
+    }
+
+    .input-box {
+      margin-bottom: 15px;
+      text-align: left;
+      position: relative;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid #444;
+      border-radius: 10px;
+      color: #fff;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .input-box input:focus {
+      border-color: #fef08a;
+    }
+
+    .btn-signin {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #fef08a, #f59e0b);
+      color: #000;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+    }
+
+    .hidden { display: none; }
+
+    .chat-preview {
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      border-radius: 10px;
+      text-align: left;
+      margin-top: 15px;
+      border-left: 3px solid #fef08a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Lamp Section -->
+  <div class="lamp-wrapper">
+    <div class="lamp-shade" id="lampShade"></div>
+    
+    <!-- LEFT SIDE STRING -->
+    <div class="string-wrapper" id="stringBtn">
+      <div class="string-line" id="stringLine"></div>
+      <div class="string-knob"></div>
+    </div>
+
+    <div class="lamp-stand"></div>
+    <div class="lamp-base"></div>
+  </div>
+
+  <!-- Login Card (Light ON hone par pop out hoga) -->
+  <div class="login-card" id="loginForm">
+    
+    <div id="formContent">
+      <h2>🔒 Secret Lock</h2>
+      <div class="input-box">
+        <input type="text" id="username" placeholder="Username">
+      </div>
+      <div class="input-box">
+        <input type="password" id="password" placeholder="Password">
+      </div>
+      <button class="btn-signin" onclick="login()">Unlock Chat</button>
+    </div>
+
+    <!-- Login Hone Ke Baad -->
+    <div id="welcomeMsg" class="hidden">
+      <h2>Welcome, Kakashi! ❤️</h2>
+      <div class="chat-preview">
+        <p style="font-size: 13px; color: #ccc;"><b>Secret Chat:</b> Haan bolo, lock khul gaya hai 🙈</p>
+      </div>
+      <button class="btn-signin" style="margin-top: 15px; background: #ef4444; color: #fff;" onclick="location.reload()">Lock Again</button>
+    </div>
+
+  </div>
+
+  <script>
+    let isOn = false;
+
+    const stringBtn = document.getElementById('stringBtn');
+    const stringLine = document.getElementById('stringLine');
+    const lampShade = document.getElementById('lampShade');
+    const loginForm = document.getElementById('loginForm');
+
+    // Pulling String Animation & Switch
+    stringBtn.addEventListener('click', () => {
+      // Dori niche khinchegi
+      gsap.to(stringLine, { height: 90, duration: 0.15, yoyo: true, repeat: 1 });
+
+      isOn = !isOn;
+
+      if (isOn) {
+        // LIGHT ON
+        lampShade.classList.add("on");
+        loginForm.classList.add("active");
+        document.body.style.backgroundColor = "#161922";
+      } else {
+        // LIGHT OFF (Form poora hide ho jayega)
+        lampShade.classList.remove("on");
+        loginForm.classList.remove("active");
+        document.body.style.backgroundColor = "#0b0c10";
+      }
+    });
+
+    // Login Check
+    function login() {
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value.trim();
+
+      if (u === "Kakashi" && p === "altmash12") {
+        document.getElementById('formContent').classList.add('hidden');
+        document.getElementById('welcomeMsg').classList.remove('hidden');
+      } else {
+        alert("Galat Password!");
+      }
+    }
+  </script>
+
+</body>
+</html>
