@@ -1,259 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cool Lamp Chat Lock</title>
-  <!-- GSAP Library for Smooth Animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lamp Lock Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #0b0c10;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      overflow: hidden;
-      transition: background-color 0.5s ease;
-    }
+        body {
+            background-color: #0b0b12;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
 
-    /* --- Lamp Setup --- */
-    .lamp-wrapper {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 20px;
-    }
+        /* Lock Screen Layout */
+        #lock-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
 
-    .lamp-shade {
-      width: 170px;
-      height: 95px;
-      background: #1f2833;
-      border-radius: 90px 90px 12px 12px;
-      position: relative;
-      z-index: 2;
-      transition: all 0.5s ease;
-      border: 2px solid #333;
-    }
+        .lamp-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px #ffbd59);
+            animation: glow 2s infinite alternate;
+        }
 
-    /* Lamp Glow Effect */
-    .lamp-shade.on {
-      background: #fef08a;
-      border-color: #fef08a;
-      box-shadow: 0 0 60px #fef08a, 0 20px 80px rgba(254, 240, 138, 0.4);
-    }
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 5px #ffbd59); }
+            to { filter: drop-shadow(0 0 20px #ffbd59); }
+        }
 
-    .lamp-stand {
-      width: 10px;
-      height: 130px;
-      background: #45f321;
-      background: linear-gradient(to bottom, #666, #333);
-    }
+        .login-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
-    .lamp-base {
-      width: 110px;
-      height: 14px;
-      background: #333;
-      border-radius: 8px 8px 0 0;
-    }
+        .login-card h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
 
-    /* --- Left Side Pull String --- */
-    .string-wrapper {
-      position: absolute;
-      top: 90px;
-      left: 20px; /* Shifted to LEFT */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      z-index: 5;
-    }
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.4);
+            color: #fff;
+            outline: none;
+            font-size: 15px;
+        }
 
-    .string-line {
-      width: 3px;
-      height: 65px;
-      background: #888;
-    }
+        .input-field:focus {
+            border-color: #ffbd59;
+        }
 
-    .string-knob {
-      width: 16px;
-      height: 16px;
-      background: #f59e0b;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #f59e0b;
-    }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #ffbd59, #ff914d);
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-    /* --- Login Form Glassmorphism --- */
-    .login-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 24px;
-      padding: 30px;
-      width: 90%;
-      max-width: 340px;
-      text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-      
-      /* Completely Hidden Initially */
-      opacity: 0;
-      transform: translateY(30px) scale(0.9);
-      pointer-events: none;
-      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 189, 89, 0.4);
+        }
 
-    /* Visible State when Light is ON */
-    .login-card.active {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: all;
-    }
+        #error-msg {
+            color: #ff4d4d;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
 
-    .login-card h2 {
-      margin-bottom: 20px;
-      color: #fef08a;
-      letter-spacing: 1px;
-    }
+        /* Full Screen Vertical Scroll Gallery */
+        #gallery-screen {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 10px 40px 10px;
+            background-color: #000;
+        }
 
-    .input-box {
-      margin-bottom: 15px;
-      text-align: left;
-      position: relative;
-    }
+        .gallery-container {
+            width: 100%;
+            max-width: 550px; /* Big full-width vertical view */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-    .input-box input {
-      width: 100%;
-      padding: 12px 15px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid #444;
-      border-radius: 10px;
-      color: #fff;
-      outline: none;
-      font-size: 14px;
-    }
-
-    .input-box input:focus {
-      border-color: #fef08a;
-    }
-
-    .btn-signin {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #fef08a, #f59e0b);
-      color: #000;
-      font-weight: bold;
-      font-size: 15px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-    }
-
-    .hidden { display: none; }
-
-    .chat-preview {
-      background: rgba(0,0,0,0.3);
-      padding: 15px;
-      border-radius: 10px;
-      text-align: left;
-      margin-top: 15px;
-      border-left: 3px solid #fef08a;
-    }
-  </style>
+        .gallery-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Lamp Section -->
-  <div class="lamp-wrapper">
-    <div class="lamp-shade" id="lampShade"></div>
-    
-    <!-- LEFT SIDE STRING -->
-    <div class="string-wrapper" id="stringBtn">
-      <div class="string-line" id="stringLine"></div>
-      <div class="string-knob"></div>
+    <!-- Lock Screen Section -->
+    <div id="lock-screen">
+        <div class="lamp-icon">🪔</div>
+        <div class="login-card">
+            <h2>Enter Secret Key</h2>
+            <input type="text" id="username" class="input-field" placeholder="Username">
+            <input type="password" id="password" class="input-field" placeholder="Password">
+            <button class="btn-login" onclick="checkLogin()">Unlock Gallery</button>
+            <div id="error-msg">Incorrect Username or Password!</div>
+        </div>
     </div>
 
-    <div class="lamp-stand"></div>
-    <div class="lamp-base"></div>
-  </div>
-
-  <!-- Login Card (Light ON hone par pop out hoga) -->
-  <div class="login-card" id="loginForm">
-    
-    <div id="formContent">
-      <h2>🔒 Secret Lock</h2>
-      <div class="input-box">
-        <input type="text" id="username" placeholder="Username">
-      </div>
-      <div class="input-box">
-        <input type="password" id="password" placeholder="Password">
-      </div>
-      <button class="btn-signin" onclick="login()">Unlock Chat</button>
+    <!-- Gallery Section -->
+    <div id="gallery-screen">
+        <div class="gallery-container">
+            <img src="https://i.postimg.cc/9F4P61sQ/1000103435.jpg" alt="Photo 1">
+            <img src="https://i.postimg.cc/T3sL3wP0/1000106108.jpg" alt="Photo 2">
+            <img src="https://i.postimg.cc/vTjvwVbV/1000098028.jpg" alt="Photo 3">
+            <img src="https://i.postimg.cc/Bn7sD2r0/1000103465.png" alt="Photo 4">
+            <img src="https://i.postimg.cc/mD7tB0xR/1000103780.png" alt="Photo 5">
+            <img src="https://i.postimg.cc/Vv3S5Znd/1000103773.jpg" alt="Photo 6">
+            <img src="https://i.postimg.cc/0j0vL1W0/1000103462.png" alt="Photo 7">
+            <img src="https://i.postimg.cc/kg7vR1V0/1000103464.png" alt="Photo 8">
+            <img src="https://i.postimg.cc/Hn8q4Y22/1000103463.png" alt="Photo 9">
+        </div>
     </div>
 
-    <!-- Login Hone Ke Baad -->
-    <div id="welcomeMsg" class="hidden">
-      <h2>Welcome, Kakashi! ❤️</h2>
-      <div class="chat-preview">
-        <p style="font-size: 13px; color: #ccc;"><b>Secret Chat:</b> Haan bolo, lock khul gaya hai 🙈</p>
-      </div>
-      <button class="btn-signin" style="margin-top: 15px; background: #ef4444; color: #fff;" onclick="location.reload()">Lock Again</button>
-    </div>
+    <script>
+        function checkLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
 
-  </div>
-
-  <script>
-    let isOn = false;
-
-    const stringBtn = document.getElementById('stringBtn');
-    const stringLine = document.getElementById('stringLine');
-    const lampShade = document.getElementById('lampShade');
-    const loginForm = document.getElementById('loginForm');
-
-    // Pulling String Animation & Switch
-    stringBtn.addEventListener('click', () => {
-      // Dori niche khinchegi
-      gsap.to(stringLine, { height: 90, duration: 0.15, yoyo: true, repeat: 1 });
-
-      isOn = !isOn;
-
-      if (isOn) {
-        // LIGHT ON
-        lampShade.classList.add("on");
-        loginForm.classList.add("active");
-        document.body.style.backgroundColor = "#161922";
-      } else {
-        // LIGHT OFF (Form poora hide ho jayega)
-        lampShade.classList.remove("on");
-        loginForm.classList.remove("active");
-        document.body.style.backgroundColor = "#0b0c10";
-      }
-    });
-
-    // Login Check
-    function login() {
-      const u = document.getElementById('username').value.trim();
-      const p = document.getElementById('password').value.trim();
-
-      if (u === "Kakashi" && p === "altmash12") {
-        document.getElementById('formContent').classList.add('hidden');
-        document.getElementById('welcomeMsg').classList.remove('hidden');
-      } else {
-        alert("Galat Password!");
-      }
-    }
-  </script>
-
+            // Set login credentials
+            if (user === "Kakashi" && pass === "altmash12") {
+                document.getElementById('lock-screen').style.display = 'none';
+                document.getElementById('gallery-screen').style.display = 'flex';
+                document.body.style.backgroundColor = "#000";
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+    </script>
 </body>
 </html>
